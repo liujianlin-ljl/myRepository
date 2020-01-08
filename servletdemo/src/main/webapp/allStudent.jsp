@@ -23,12 +23,14 @@ window.onload=function(){
 </script>
 </head>
 <body>
+<form action="student">
 	<table width="600" align="center" border="1" cellspacing="1" cellpadding="5">
 		<caption>
 			<h2>学生信息</h2>
 		</caption>
 		<thead>
 			<tr align="center">
+				<th>选择</th>
 				<th>序号</th>
 				<th>学号</th>
 				<th>姓名</th>
@@ -42,6 +44,9 @@ window.onload=function(){
 			<c:if test="${not empty stuList }">
 				<c:forEach items="${stuList }" var="student" varStatus="s">
 					<tr align="center">
+						<td>
+							<input type="checkbox" name="ids" value="${student.s_no }" />
+						</td>
 						<td>${s.count }</td>
 						<td>${student.s_no }</td>
 						<td>${student.s_name }</td>
@@ -54,6 +59,12 @@ window.onload=function(){
 						</td>
 					</tr>
 				</c:forEach>
+				<tr>
+					<td colspan="8">
+						<input type="hidden" name="action" value="batch" />
+						<input type="submit" value="批   量   删   除" style="width:100%;height:30px;" />
+					</td>
+				</tr>
 			</c:if>
 			<c:if test="${empty stuList }">
 				<tr>
@@ -62,6 +73,7 @@ window.onload=function(){
 			</c:if>
 		</tbody>
 	</table>
+</form>
 	<table align="center" width="600">
 		<tr>
 			<td>

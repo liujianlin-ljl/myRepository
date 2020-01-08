@@ -38,6 +38,10 @@ public class StudentController extends HttpServlet {
 		String type = req.getParameter("action");
 		System.out.println("action:" + type);
 		try {
+			if(null==type || "".equals(type.trim())) {
+				System.out.println("请求参数错误！");
+				throw new RuntimeException();
+			}
 			if ("allStudent".equals(type)) {
 				findAll(req, resp);// 查询全部
 			}
@@ -49,6 +53,9 @@ public class StudentController extends HttpServlet {
 			}
 			if ("del".equals(type)) {
 				delStudent(req, resp);// 删除学生
+			}
+			if("batch".equals(type)) {
+				batch(req,resp);
 			}
 			if ("toUpdate".equals(type)) {
 				// 跳转到修改页面
@@ -65,6 +72,24 @@ public class StudentController extends HttpServlet {
 			// 出现异常跳转至错误页面
 			req.getRequestDispatcher("error/error.jsp").forward(req, resp);
 		}
+	}
+	/**
+	 * 批量删除
+	 * @param req
+	 * @param resp
+	 * @throws Exception 
+	 */
+	private void batch(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+		String msg="批量删除失败";
+		Object[] ids=req.getParameterValues("ids");
+		int rows=studentDao.bacthUpdate(ids);
+		System.out.println(rows);
+		if(rows>0) {
+			msg = "批量删除成功";
+		}
+		HttpSession session = req.getSession();
+		session.setAttribute("msg", msg);
+		resp.sendRedirect("/servletdemo/student?action=allStudent");
 	}
 
 	/**
