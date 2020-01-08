@@ -11,9 +11,12 @@ import com.ljl.entity.Student;
 import com.ljl.util.JdbcUtil;
 
 public class StudentDaoImpl implements StudentDao {
+	private InputStream in=null;
+	public StudentDaoImpl() {
+		in=getClass().getClassLoader().getResourceAsStream("jdbc-mysql.properties");
+	}
 
 	public int save(Student entity) throws Exception {
-		InputStream in = this.getClass().getClassLoader().getResourceAsStream("jdbc-mysql.properties");
 		JdbcUtil.getConnection(in);
 		String sql="insert into t_student(s_no,s_name,s_sex,s_age,s_class) values(?,?,?,?,?)";
 		Object[] params= {entity.getS_no(),entity.getS_name(),entity.getS_sex(),
@@ -22,7 +25,6 @@ public class StudentDaoImpl implements StudentDao {
 	}
 
 	public int update(Student entity) throws Exception {
-		InputStream in = this.getClass().getClassLoader().getResourceAsStream("jdbc-mysql.properties");
 		JdbcUtil.getConnection(in);
 		String sql="update t_student set s_name=?,s_sex=?,s_age=?,s_class=? where s_no=?";
 		Object[] params= {entity.getS_name(),entity.getS_sex(),
@@ -32,7 +34,6 @@ public class StudentDaoImpl implements StudentDao {
 
 	public int delete(Object id) throws Exception {
 		List<Student> stuList=new ArrayList<Student>();
-		InputStream in = this.getClass().getClassLoader().getResourceAsStream("jdbc-mysql.properties");
 		JdbcUtil.getConnection(in);
 		//String sql="delete from t_student where s_no=?";
 		String sql="update t_student set del='yes' where s_no=?";
@@ -42,9 +43,7 @@ public class StudentDaoImpl implements StudentDao {
 
 	public List<Student> findAll() throws Exception {
 		List<Student> stuList=new ArrayList<Student>();
-		InputStream in = this.getClass().getClassLoader().getResourceAsStream("jdbc-mysql.properties");
 		JdbcUtil.getConnection(in);
-		//JdbcUtil.getConnection("/WEB-INF/jdbc-mysql.properties");
 		String sql="select s_no,s_name,s_sex,s_age,s_class,c.c_name,c.c_address from t_student s,t_class c"+
 					" where s.s_class=c.c_no and del='no'";
 		ResultSet rs = JdbcUtil.query(sql, null);
@@ -70,7 +69,6 @@ public class StudentDaoImpl implements StudentDao {
 
 	public Student findById(Object id) throws Exception {
 		List<Student> stuList=new ArrayList<Student>();
-		InputStream in = this.getClass().getClassLoader().getResourceAsStream("jdbc-mysql.properties");
 		JdbcUtil.getConnection(in);
 		String sql="select s_no,s_name,s_sex,s_age,s_class,c.c_name,c.c_address "+
 					"from t_student s,t_class c where s.s_class=c.c_no and del='no' and s_no=?";
@@ -98,7 +96,6 @@ public class StudentDaoImpl implements StudentDao {
 	@Override
 	public List<Student> findByName(String name) throws Exception{
 		List<Student> stuList=new ArrayList<Student>();
-		InputStream in = this.getClass().getClassLoader().getResourceAsStream("jdbc-mysql.properties");
 		JdbcUtil.getConnection(in);
 		String sql="select s_no,s_name,s_sex,s_age,s_class,c.c_name,c.c_address "+
 					"from t_student s,t_class c where s.s_class=c.c_no and del='no' and s_name like ?";
@@ -121,6 +118,20 @@ public class StudentDaoImpl implements StudentDao {
 		}
 		JdbcUtil.close();
 		return stuList;
+	}
+
+	@Override
+	public int bacthUpdate(Object[] ids) throws Exception {
+		List<Student> stuList=new ArrayList<Student>();
+		JdbcUtil.getConnection(in);
+		String sql="update t_student set del='yes' where s_no in(";
+		for (Object id:ids) {
+			sql+="?,";
+		}
+		sql=sql.substring(0, sql.lastIndexOf(",")-1);
+		sql+=")";
+		//JdbcUtil.update(sql, ids);
+		return 0;
 	}
 	
 }
