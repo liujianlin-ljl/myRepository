@@ -130,8 +130,7 @@ public class StudentDaoImpl implements StudentDao {
 		}
 		sql=sql.substring(0, sql.lastIndexOf(",")-1);
 		sql+=")";
-		//JdbcUtil.update(sql, ids);
-		return 0;
+		return JdbcUtil.update(sql, ids);
 	}
 	
 }
