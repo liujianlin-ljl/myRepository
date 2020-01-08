@@ -122,10 +122,9 @@ public class StudentDaoImpl implements StudentDao {
 
 	@Override
 	public int bacthUpdate(Object[] ids) throws Exception {
-		List<Student> stuList=new ArrayList<Student>();
 		JdbcUtil.getConnection(in);
 		String sql="update t_student set del='yes' where s_no in(";
-		for (Object id:ids) {
+		for (int i=0;i<ids.length;i++) {
 			sql+="?,";
 		}
 		sql=sql.substring(0, sql.lastIndexOf(",")-1);
